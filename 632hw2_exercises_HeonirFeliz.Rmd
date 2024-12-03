@@ -1,0 +1,109 @@
+---
+title: "Heonir Feliz HW2"
+output:
+  html_document:
+    df_print: paged
+---
+```{r}
+library(tidyverse)
+library(readxl)
+library(testthat)
+library(assertthat)
+library(devtools)
+knitr::opts_chunk$set(include = FALSE)
+```
+
+# Summary
+
+We are going to produce an R package with functions with documentation. The application is functionality to visualize and process data and estimates on family planning worldwide. Note that we already developed the function in HW1. We will further work on it and wrap it up in an R package in this HW2.
+
+
+
+## What to hand in
+Please submit your zipped package and associated files described below.
+The submission needs to contain:
+
+1. an R package that includes the functions needed for the HW exercises, including documentation for the function `plot_cp`
+2. an R notebook called hw2_exercises.Rmd and associated knitted html that shows the function calls and output as displayed in the hw2 starter Rmd/pdf with example solutions.
+3. a link to your GitHub repo, which contains your package, Rmd, and knitted html file.
+
+
+Grading: 25 points
+
+- 10 points for exercise 1
+- 10 points for exercise 2
+- 5 points for exercise 3
+
+# HW2 exercises
+
+In HW2, we are going to set up a package and add the plotting function, called `plot_cp', which is developed in HW1. 
+
+# Exercise 1: Function call in R packages
+
+You should put your data files under `data` folder within your R package.
+
+The data set csv file contraceptive_use.csv contains observed mCPR values. Relevant variable info is as follows:
+
+- contraceptive_use_modern = observed mCPR 
+- division_numeric_code = country iso code
+- is_in_union == "Y" refers to observations among married women. 
+- (start_date + end_date)/2 is the reference time for the observation. 
+
+Extend the plotting function to produce the plots below, with additional arguments `CI`, which indicates what uncertainty interval to plot, or none uncertainty intervals shown when `CI` is set to be missing. 
+
+The first plot shows mCPR (%) among married women against time in Afghanistan (country iso code 4) as before but with observed data added from contraceptive_use.csv. Dots are observed data, lines are point estimates and the shaded areas represent 95% uncertainty intervals. 
+
+The second plot shows mCPR (%) among married women against time in Afghanistan (country iso code 4) without uncertainty intervals. 
+
+The third plot shows mCPR (%) among married women against time in Kenya (country iso code 404) with the shaded areas representing 80% uncertainty intervals. 
+
+Note that in the example solution, `dat` refers to the processed data set with variables iso, year (referring to reference year), and cp (contraceptive_use_modern * 100). 
+
+In this HW2, you should not define the `plot_cp()` in this Rmd. Instead, you should define it in `R/plot_cp.R` file and load it by `load_all()` function call before.
+
+You should be able to replicate the following plots:
+
+```{r, include = T, warning = F}
+library(devtools)
+load_all("MyPackage")
+
+est <- read_csv("MyPackage/data/est-1.csv")
+dat <- read_csv("MyPackage/data/contraceptive_use-1.csv")
+
+
+x <- plot_cp(dat, est, iso_code = 4)
+y <- plot_cp(dat, est, iso_code = 4, CI = NA)
+z <- plot_cp(dat, est, iso_code = 404, CI = 80)
+
+plot(x)
+plot(y)
+plot(z)
+```
+
+# Exercise 2: Add documentation 
+
+Document the arguments and output of plot_cp. To do that, add a helpfile (.Rd file in subfolder man) using the approach from the class material "documenting an r package":
+
+- add roxygen skeleton to the plot_cp function, fill in the details
+- use the function document to generate the Rd file
+
+In order to show the help file in the knitted Rmd, install the package Rd2md and use this code block:
+
+```{r visible = T, warning = F, include = T}
+library(Rd2md)
+# Parse the .Rd file into an object
+rd_object <- tools::parse_Rd("MyPackage/man/plot_cp.Rd")
+
+# Write the content of the Rd file into an md, then read it and render it
+writeLines(as_markdown(rd_object), "plot_cp.md")
+cat(readLines("plot_cp.md"), sep = "\n")
+```
+
+# Exercise 3: GitHub
+
+Now it is time to share your work! Create a repo on your GitHub. Commit and push your package files, Rmd and knitted html to your repo. Paste the link to your GitHub repo below. 
+
+Note that in order to earn full credits, your GitHub repo commit history should show at least two commits.
+
+Paste your link here...
+https://github.com/hfeliz03/BIOSTATS632-HW2
